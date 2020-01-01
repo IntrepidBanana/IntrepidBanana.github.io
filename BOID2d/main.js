@@ -11,12 +11,12 @@
 // #3c1361
 
 let c = document.getElementsByTagName("canvas")[0];
-let ctx = c.getContext("2d");
+let ctx;
 let height, width;
 
 let boids = [];
 let boidNumber = 40;
-let boidSize = 40
+let boidSize = 20
 
 let globalFOV = 270;
 let globalViewDistance = 60;
@@ -31,12 +31,26 @@ let cohesionSpeed = .0025;
 let debug = true;
 let debugNear = false;
 
-window.onload = function () {
+function resizeCanvas() {
+    width = c.parentElement.clientWidth;
+    height = c.parentElement.clientHeight;
+    
+    c.width = width;
+    c.height = height;
+    
+    ctx = c.getContext("2d");
+    ctx.canvas.width = width;
+    ctx.canvas.height = height;
+    
 
-    ctx.canvas.width = window.innerHeight;
-    ctx.canvas.height = window.innerHeight;
-    height = c.height;
-    width = c.width;
+    console.log(width, height)
+}
+
+window.onload = function () {
+    window.addEventListener('resize', resizeCanvas, false);
+    resizeCanvas();
+    // ctx.canvas.width = window.innerHeight;
+    // ctx.canvas.height = window.innerHeight;
     this.document.getElementById("numberOfBoids").oninput = function () {
         boidNumber = document.getElementById("numberOfBoids").value;
     }
@@ -58,7 +72,7 @@ function sleep(ms) {
 }
 
 function newBoid(i) {
-    return makeBoid(i, [Math.random() * width, Math.random() * height], Math.random() * 360, 5, globalViewDistance, 220);
+    return makeBoid(i, [Math.random() * width, Math.random() * height], Math.random() * 360, 3, globalViewDistance, 220);
 }
 
 function init() {
@@ -76,7 +90,7 @@ async function gameLoop() {
 
         let startTime = new Date().getTime();
         ctx.fillStyle = "#3c1361";
-        ctx.fillRect(0, 0, c.height, c.width);
+        ctx.fillRect(0, 0, width, height);
         if (boids.length > boidNumber) {
             boids.pop();
         }
@@ -235,7 +249,7 @@ function dist(myX, myY, targetX, targetY) {
 
 function seperationMeasure(boid, nearby) {
     let deltax = 0, deltay = 0;
-    if (debug && boid.selected&&false) {
+    if (debug && boid.selected && false) {
 
         ctx.beginPath();
         ctx.ellipse(boid.x, boid.y, seperationMinimum, seperationMinimum, 0, 0, Math.PI * 2)
@@ -290,20 +304,20 @@ function cohesionMeasure(boid, nearby) {
 function keepBoidInBounds(boid) {
     let x = boid.x, y = boid.y;
 
-    let c = 1.05;
+    let c = 1.01;
 
-    if (x < -width * .1) {
+    if (x < -width * (c - 1)) {
         x = width * c;
     }
     else if (x > width * c) {
-        x = -width * .1;
+        x = -width * (c - 1);
     }
 
-    if (y < -height * .1) {
+    if (y < -height * (c - 1)) {
         y = height * c;
     }
     else if (y > height * c) {
-        y = -height * .1;
+        y = -height * (c - 1);
     }
 
     boid.x = x;

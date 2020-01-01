@@ -11,7 +11,10 @@
 </head>
 
 <body>
-    <canvas style="width:640px;height: 640px;margin: auto;"></canvas>
+    <div>
+
+        <canvas></canvas>
+    </div>
 
     <div class="control-panel">
         <div>
@@ -26,11 +29,11 @@
             <span>Field Of View</span>
             <input type="range" min="0" max="360" start="270" class="slider" id="fieldOfView">
         </div>
+        <label>
+            <span>Debug</span>
+            <input type="checkbox" checked="checked" id="debug">
+        </label>
     </div>
-    <label>
-        Debug
-        <input type ="checkbox" checked="checked" id="debug">
-    </label>
     <script src="main.js"></script>
 </body>
 
