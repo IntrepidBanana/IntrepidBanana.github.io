@@ -22,13 +22,13 @@ let globalFOV = 270;
 let globalViewDistance = 60;
 
 let seperationMinimum = 100;
-let seperationSpeed = 3;
+let seperationSpeed = 2.5;
 
 let alignmentSpeed = .125;
 
 let cohesionSpeed = .0025;
 
-let debug = false;
+let debug = true;
 let debugNear = false;
 
 window.onload = function () {
@@ -37,14 +37,17 @@ window.onload = function () {
     ctx.canvas.height = window.innerHeight;
     height = c.height;
     width = c.width;
-    this.document.getElementById("numberOfBoids").oninput = function(){
+    this.document.getElementById("numberOfBoids").oninput = function () {
         boidNumber = document.getElementById("numberOfBoids").value;
     }
-    document.getElementById("fieldOfView").oninput = function(){
+    document.getElementById("fieldOfView").oninput = function () {
         globalFOV = document.getElementById("fieldOfView").value;
     }
-    this.document.getElementById("viewDistance").oninput = function(){
+    this.document.getElementById("viewDistance").oninput = function () {
         globalViewDistance = document.getElementById("viewDistance").value;
+    }
+    this.document.getElementById("debug").onclick = function () {
+        debug = document.getElementById("debug").checked;
     }
     init();
     gameLoop();
@@ -54,7 +57,7 @@ function sleep(ms) {
     return new Promise(resolve => setTimeout(resolve, ms));
 }
 
-function newBoid(i){
+function newBoid(i) {
     return makeBoid(i, [Math.random() * width, Math.random() * height], Math.random() * 360, 5, globalViewDistance, 220);
 }
 
@@ -69,15 +72,15 @@ function init() {
 async function gameLoop() {
     let repetition = 10000
     const msPerFrame = 1000 / 60;
-    while (repetition-- > 0) {
+    while (repetition > 0) {
 
         let startTime = new Date().getTime();
         ctx.fillStyle = "#3c1361";
         ctx.fillRect(0, 0, c.height, c.width);
-        if(boids.length > boidNumber){
+        if (boids.length > boidNumber) {
             boids.pop();
         }
-        if(boids.length < boidNumber){
+        if (boids.length < boidNumber) {
             boids.push(newBoid(boids.length));
         }
         updateBoids();
@@ -167,8 +170,8 @@ function updateBoid(boid) {
     boid.updateVelocity();
     boid = keepBoidInBounds(boid);
     nearby = getNearbyBoids(boid);
-    boid = aligmnentMeasure(boid,nearby);
-    boid = cohesionMeasure(boid,nearby);
+    boid = aligmnentMeasure(boid, nearby);
+    boid = cohesionMeasure(boid, nearby);
     boid = seperationMeasure(boid, nearby);
     return boid;
 
@@ -204,7 +207,7 @@ function getNearbyBoids(boid) {
         let angle = toDegrees(theta);
 
         if (angle <= boid.fov / 2) {
-            if (debugNear || boid.selected) {
+            if (debug && boid.selected) {
                 // console.log(Math.floor(dir), Math.floor(relDir), Math.floor(Math.abs(dir - relDir) % 180), Math.floor(Math.abs(dir - relDir) % 180) < boid.fov/2);
                 ctx.beginPath();
                 ctx.moveTo(boid.x, boid.y);
@@ -232,7 +235,7 @@ function dist(myX, myY, targetX, targetY) {
 
 function seperationMeasure(boid, nearby) {
     let deltax = 0, deltay = 0;
-    if (debug && boid.selected) {
+    if (debug && boid.selected&&false) {
 
         ctx.beginPath();
         ctx.ellipse(boid.x, boid.y, seperationMinimum, seperationMinimum, 0, 0, Math.PI * 2)
@@ -360,7 +363,7 @@ function drawBoid(boid) {
         [(x) - size * 0.4, y + size * .25],
         [(x - size * 0.3), y]
     ]
-    if (boid.selected) {
+    if (boid.selected && debug) {
         color = "#ffffff";
         ctx.beginPath();
         ctx.moveTo(x, y);
@@ -370,7 +373,7 @@ function drawBoid(boid) {
         ctx.stroke();
     }
 
-    if (debug || boid.selected) {
+    if (debug && boid.selected) {
         ctx.beginPath()
         ctx.lineTo(x, y);
         ctx.ellipse(x, y, boid.viewDistance, boid.viewDistance, boid.getDirectionRadians(), toRadians(boid.fov) / 2 * -1, toRadians(boid.fov) / 2);
@@ -383,7 +386,7 @@ function drawBoid(boid) {
     }
     drawPolygon(polygon, boid.x, boid.y, toRadians(dir), color);
 
-    if (debug) {
+    if (debug && boid.selected) {
         ctx.fillStyle = "#ffffff";
         ctx.fillRect(boid.x - 2.5, boid.y - 2.5, 5, 5);
     }
