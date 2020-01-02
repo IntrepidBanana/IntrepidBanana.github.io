@@ -14,6 +14,10 @@ let c = document.getElementsByTagName("canvas")[0];
 let ctx;
 let height, width;
 
+let mouseCollisionRadius = 25;
+let mouseX = -100, mouseY = -100;
+
+
 let boids = [];
 let boidNumber = 150;
 let boidSize = 20
@@ -91,6 +95,10 @@ window.onload = function () {
     document.getElementById("debug").onclick = function () {
         debug = document.getElementById("debug").checked;
     }
+
+    document.addEventListener('mousemove', onMouseUpdate, false);
+    document.addEventListener('mouseenter', onMouseUpdate, false);
+    document.addEventListener("touchstart", onMouseUpdate, false);
     init();
     gameLoop();
 };
@@ -208,6 +216,11 @@ function makeBoid(id = 0, initialPosition = [0, 0], initialDirection = 0, initia
     return boid;
 }
 
+function onMouseUpdate(e) {
+    mouseX = e.pageX;
+    mouseY = e.pageY;
+}
+
 function updateBoid(boid) {
     boid.fov = globalFOV;
     boid.viewDistance = globalViewDistance;
@@ -219,6 +232,18 @@ function updateBoid(boid) {
     boid = aligmnentMeasure(boid, nearby);
     boid = cohesionMeasure(boid, nearby);
     boid = seperationMeasure(boid, nearby);
+
+    let d = dist(boid.x, boid.y, mouseX, mouseY);
+    let deltaX = mouseX - boid.x, deltaY = mouseY - boid.y;
+    if (d < mouseCollisionRadius) {
+        let delta = mouseCollisionRadius - d;
+        let theta = Math.atan2(deltaY, deltaX) + Math.PI;
+        let dx = delta * Math.cos(theta);
+        let dy = delta * Math.sin(theta);
+        boid.addChangeInVelocity(dx * 0.1, dy * 0.1);
+    }
+
+
     return boid;
 
 }
@@ -336,24 +361,30 @@ function cohesionMeasure(boid, nearby) {
 function keepBoidInBounds(boid) {
     let x = boid.x, y = boid.y;
 
-    let c = 1.01;
+    let c = .99;
 
     if (x < -width * (c - 1)) {
         x = width * c;
+        boid.addChangeInVelocity(10, 0);
     }
     else if (x > width * c) {
         x = -width * (c - 1);
+        boid.addChangeInVelocity(-10, 0);
     }
 
     if (y < -height * (c - 1)) {
         y = height * c;
+
+        boid.addChangeInVelocity(0, 10);
     }
     else if (y > height * c) {
         y = -height * (c - 1);
+
+        boid.addChangeInVelocity(0, -10);
     }
 
-    boid.x = x;
-    boid.y = y;
+    // boid.x = x;
+    // boid.y = y;
     return boid;
 
 
@@ -430,7 +461,7 @@ function drawBoid(boid) {
         ctx.fill();
         ctx.globalAlpha = 1;
     }
-    if(biggestBoidPack.includes(boid)){
+    if (biggestBoidPack.includes(boid) && debug) {
 
         color = "#123ffa"
     }
@@ -485,7 +516,7 @@ function largestBoid() {
         }
         let breadth = breadthOfBoid(b);
         searched = searched.concat(breadth);
-        if(breadth.length > max.length){
+        if (breadth.length > max.length) {
             max = breadth;
         }
     }
