@@ -15,13 +15,14 @@ let ctx;
 let height, width;
 
 let boids = [];
-let boidNumber = 40;
+let boidNumber = 150;
 let boidSize = 20
 
-let globalFOV = 270;
-let globalViewDistance = 60;
+let globalFOV = 300;
+let globalViewDistance = 30;
+let globalSpeed = 3;
 
-let seperationMinimum = 100;
+let seperationMinimum = 20;
 let seperationSpeed = 2.5;
 
 let alignmentSpeed = .125;
@@ -32,18 +33,27 @@ let debug = true;
 let debugNear = false;
 
 function resizeCanvas() {
-    width = c.parentElement.clientWidth;
-    height = c.parentElement.clientHeight;
-    
+    // width = c.parentElement.clientWidth;
+    // height = c.parentElement.clientHeight;
+    width = window.innerWidth;
+    height = window.innerHeight;
     c.width = width;
     c.height = height;
-    
+
     ctx = c.getContext("2d");
     ctx.canvas.width = width;
     ctx.canvas.height = height;
-    
 
-    console.log(width, height)
+
+    console.log(width, height);
+
+    document.getElementById("numberOfBoids").max = 200
+    if (window.innerWidth >= 768) {
+        document.getElementById("numberOfBoids").max = 300;
+    }
+    if (window.innerWidth >= 1024) {
+        document.getElementById("numberOfBoids").max = 500;
+    }
 }
 
 window.onload = function () {
@@ -51,16 +61,32 @@ window.onload = function () {
     resizeCanvas();
     // ctx.canvas.width = window.innerHeight;
     // ctx.canvas.height = window.innerHeight;
-    this.document.getElementById("numberOfBoids").oninput = function () {
+    document.getElementById("numberOfBoids").oninput = function () {
         boidNumber = document.getElementById("numberOfBoids").value;
     }
     document.getElementById("fieldOfView").oninput = function () {
         globalFOV = document.getElementById("fieldOfView").value;
     }
-    this.document.getElementById("viewDistance").oninput = function () {
+    document.getElementById("viewDistance").oninput = function () {
         globalViewDistance = document.getElementById("viewDistance").value;
     }
-    this.document.getElementById("debug").onclick = function () {
+    document.getElementById("seperation").oninput = function () {
+        seperationMinimum = document.getElementById("seperation").value;
+    }
+    document.getElementById("alignment").oninput = function () {
+        alignmentSpeed = document.getElementById("alignment").value / 100;
+    }
+    document.getElementById("cohesion").oninput = function () {
+        cohesionSpeed = document.getElementById("cohesion").value / 10000;
+    }
+    document.getElementById("size").oninput = function () {
+        boidSize = document.getElementById("size").value;
+    }
+    document.getElementById("speed").oninput = function () {
+        globalSpeed = document.getElementById("speed").value;
+
+    }
+    document.getElementById("debug").onclick = function () {
         debug = document.getElementById("debug").checked;
     }
     init();
@@ -140,6 +166,7 @@ function makeBoid(id = 0, initialPosition = [0, 0], initialDirection = 0, initia
         viewDistance: initialViewDistance,
         fov: initialFov,
         selected: false,
+        nearby: [],
         updateForwardVector: function () {
             this.forwardVector = normalizeVector({ x: Math.cos(this.direction), y: Math.sin(this.direction) });
         },
@@ -181,9 +208,11 @@ function makeBoid(id = 0, initialPosition = [0, 0], initialDirection = 0, initia
 function updateBoid(boid) {
     boid.fov = globalFOV;
     boid.viewDistance = globalViewDistance;
+    boid.speed = globalSpeed;
     boid.updateVelocity();
     boid = keepBoidInBounds(boid);
     nearby = getNearbyBoids(boid);
+    boid.nearby = nearby;
     boid = aligmnentMeasure(boid, nearby);
     boid = cohesionMeasure(boid, nearby);
     boid = seperationMeasure(boid, nearby);
@@ -228,7 +257,7 @@ function getNearbyBoids(boid) {
                 ctx.lineTo(b.x, b.y);
                 ctx.closePath()
                 ctx.strokeStyle = "#ffffff";
-                ctx.stroke();
+                // ctx.stroke();
 
             }
 
@@ -379,12 +408,12 @@ function drawBoid(boid) {
     ]
     if (boid.selected && debug) {
         color = "#ffffff";
-        ctx.beginPath();
-        ctx.moveTo(x, y);
-        ctx.lineTo(boid.forwardVector.x * 100 + x, boid.forwardVector.y * 100 + y);
-        ctx.closePath();
-        ctx.strokeStyle = "#ffffff";
-        ctx.stroke();
+        // ctx.beginPath();
+        // ctx.moveTo(x, y);
+        // ctx.lineTo(boid.forwardVector.x * 100 + x, boid.forwardVector.y * 100 + y);
+        // ctx.closePath();
+        // ctx.strokeStyle = "#ffffff";
+        // ctx.stroke();
     }
 
     if (debug && boid.selected) {
@@ -400,7 +429,7 @@ function drawBoid(boid) {
     }
     drawPolygon(polygon, boid.x, boid.y, toRadians(dir), color);
 
-    if (debug && boid.selected) {
+    if (debug && boid.selected && false) {
         ctx.fillStyle = "#ffffff";
         ctx.fillRect(boid.x - 2.5, boid.y - 2.5, 5, 5);
     }
@@ -409,4 +438,51 @@ function drawBoid(boid) {
 
 
 
+}
+
+
+
+
+
+function breadthOfBoid(boid) {
+    let breadthStack = [boid];
+    let searched = [];
+
+    let i = 0;
+    while (i < breadthStack.length) {
+        console.log(i);
+        let b = breadthStack[i];
+        if (searched.includes(b)) {
+            i++;
+            continue;
+        }
+        breadthStack = breadthStack.concat(b.nearby);
+        searched.push(b);
+        i++;
+    }
+
+    return searched;
+
+}
+
+function largestBoid() {
+    let max = [];
+    // boid = boids[0];
+    // searched = breadthOfBoid(boid);
+    searched = [];
+    let i = 0;
+    while (i < boids.length && i < 20) {
+        let b = boids[i];
+        i++;
+        if (searched.includes(b)) {
+            continue;
+        }
+        let breadth = breadthOfBoid(b);
+        searched = searched.concat(breadth);
+        console.log(breadth.length);
+        if(breadth.length > max.length){
+            max = breadth;
+        }
+    }
+    return max;
 }

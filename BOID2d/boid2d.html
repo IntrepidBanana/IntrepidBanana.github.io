@@ -15,7 +15,6 @@
 
         <canvas></canvas>
     </div>
-
     <div class="control-panel">
         <div>
             <span>Number Of Boids</span>
@@ -29,8 +28,28 @@
             <span>Field Of View</span>
             <input type="range" min="0" max="360" start="270" class="slider" id="fieldOfView">
         </div>
+        <div>
+            <span>Seperation</span>
+            <input type="range" min="1" max="500" start="100" class="slider" id="seperation">
+        </div>
+        <div>
+            <span>Alignment Speed</span>
+            <input type="range" min="0" max="100" start="12.5" class="slider" id="alignment">
+        </div>
+        <div>
+            <span>Cohesion Speed</span>
+            <input type="range" min="0" max="500" start="25" class="slider" id="cohesion">
+        </div>
+        <div>
+            <span>Size</span>
+            <input type="range" min="15" max="50" start="20" class="slider" id="size">
+        </div>
+        <div>
+            <span>Speed</span>
+            <input type="range" min="1" max="10" start="5" class="slider" id="speed">
+        </div>
         <label>
-            <span>Debug</span>
+            <span>Visualize</span>
             <input type="checkbox" checked="checked" id="debug">
         </label>
     </div>
