@@ -99,6 +99,7 @@ window.onload = function () {
     document.addEventListener('mousemove', onMouseUpdate, false);
     document.addEventListener('mouseenter', onMouseUpdate, false);
     document.addEventListener("touchstart", onMouseUpdate, false);
+    document.addEventListener("touchmove", onMouseUpdate, false);
     init();
     gameLoop();
 };
