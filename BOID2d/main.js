@@ -14,7 +14,7 @@ let c = document.getElementsByTagName("canvas")[0];
 let ctx;
 let height, width;
 
-let mouseCollisionRadius = 25;
+let mouseCollisionRadius = 35;
 let mouseX = -100, mouseY = -100;
 
 
@@ -100,6 +100,10 @@ window.onload = function () {
     document.addEventListener('mouseenter', onMouseUpdate, false);
     document.addEventListener("touchstart", onMouseUpdate, false);
     document.addEventListener("touchmove", onMouseUpdate, false);
+    document.addEventListener("touchend", function(){
+        mouseX = -100;
+        mouseY = -100;
+    }, false);
     init();
     gameLoop();
 };
@@ -152,7 +156,7 @@ function draw() {
         drawBoid(boid);
     }
 
-    ctx.closePath();
+
 }
 
 function normalizeVector(vector = { x: 1, y: 0 }) {
@@ -218,8 +222,15 @@ function makeBoid(id = 0, initialPosition = [0, 0], initialDirection = 0, initia
 }
 
 function onMouseUpdate(e) {
-    mouseX = e.pageX;
-    mouseY = e.pageY;
+    if(e.type == 'touchstart' || e.type == 'touchmove' || e.type == 'touchend' || e.type == 'touchcancel'){
+        var touch = e.touches[0] || e.changedTouches[0];
+        mouseX = touch.pageX;
+        mouseY = touch.pageY;
+    } else if (e.type == 'mousedown' || e.type == 'mouseup' || e.type == 'mousemove' || e.type == 'mouseover'|| e.type=='mouseout' || e.type=='mouseenter' || e.type=='mouseleave') {
+        mouseX = e.clientX;
+        mouseY = e.clientY;
+    }
+
 }
 
 function updateBoid(boid) {
