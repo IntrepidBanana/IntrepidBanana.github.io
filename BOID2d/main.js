@@ -18,6 +18,8 @@ let boids = [];
 let boidNumber = 150;
 let boidSize = 20
 
+let biggestBoidPack = [];
+
 let globalFOV = 300;
 let globalViewDistance = 30;
 let globalSpeed = 3;
@@ -124,6 +126,7 @@ async function gameLoop() {
             boids.push(newBoid(boids.length));
         }
         updateBoids();
+        biggestBoidPack = largestBoid();
         draw();
 
         let endTime = new Date().getTime();
@@ -427,6 +430,10 @@ function drawBoid(boid) {
         ctx.fill();
         ctx.globalAlpha = 1;
     }
+    if(biggestBoidPack.includes(boid)){
+
+        color = "#123ffa"
+    }
     drawPolygon(polygon, boid.x, boid.y, toRadians(dir), color);
 
     if (debug && boid.selected && false) {
@@ -450,7 +457,6 @@ function breadthOfBoid(boid) {
 
     let i = 0;
     while (i < breadthStack.length) {
-        console.log(i);
         let b = breadthStack[i];
         if (searched.includes(b)) {
             i++;
@@ -479,7 +485,6 @@ function largestBoid() {
         }
         let breadth = breadthOfBoid(b);
         searched = searched.concat(breadth);
-        console.log(breadth.length);
         if(breadth.length > max.length){
             max = breadth;
         }
