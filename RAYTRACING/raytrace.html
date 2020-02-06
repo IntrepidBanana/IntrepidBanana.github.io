@@ -1,0 +1,293 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Document</title>
+</head>
+
+<body>
+    <canvas style="background-color: black;"></canvas>
+    <script src="dist/gpu-browser.min.js"></script>
+    <script>
+        const aspectRatio = 1;
+
+        const windowWidth = 420;
+        const windowHeight = windowWidth / aspectRatio;
+
+
+        const projectedWidth = 420;
+        const projectedHeight = projectedWidth / aspectRatio;
+
+        let canvas = document.getElementsByTagName("canvas")[0];
+        canvas.width = windowWidth;
+        canvas.height = windowHeight;
+
+        let ctx = canvas.getContext("2d");
+
+        ctx.windowWidth = windowWidth;
+        ctx.windowHeight = windowHeight;
+
+
+        const gpu = new GPU();
+
+        const resolution = [windowWidth, windowHeight];
+
+        function degrees_to_radians(degrees) {
+            var pi = Math.PI;
+            return degrees * (pi / 180);
+        }
+
+        function distance(x1, y1, z1, x2, y2, z2) {
+            return Math.sqrt(Math.pow(x1 - x2, 2) + Math.pow(y1 - y2, 2) + Math.pow(z1 - z2, 2))
+        }
+
+        class Vector3 {
+            constructor(x = 0, y = 0, z = 0) {
+                this.x = x;
+                this.y = y;
+                this.z = z;
+            }
+            normalize() {
+                let magnitude = distance(0, 0, 0, this.x, this.y, this.z);
+                if (magnitude == 0) return new Vector3(this.x, this.y, this.z);
+
+                let x = this.x / magnitude;
+                let y = this.y / magnitude;
+                let z = this.z / magnitude;
+
+
+                return new Vector3(x, y, z);
+            }
+        }
+
+        class Sphere {
+            constructor(position = new Vector3(0, 0, 0), radius = 0.5, color = "#7788ee") {
+                this.position = position
+                this.radius = radius;
+                this.color = color;
+            }
+
+            signedDistance(vector) {
+                const dist = distance(this.position.x, this.position.y, this.position.z, vector.x, vector.y, vector.z);
+                return dist - this.radius;
+            }
+
+            hit(vector) {
+                if (signedDistance(vector) <= 0) {
+                    return true;
+                }
+                return false;
+            }
+        };
+
+        class Camera {
+            constructor(position = new Vector3(0, 0, -3), direction = new Vector3(0, 0, -1), fov = 75, near = 0.1, far = 5) {
+                this.position = position;
+                this.direction = direction;
+                this.fov = fov;
+                this.near = near;
+                this.far = far;
+            }
+
+            getFrame(objectList) {
+
+                let displayArray = [];
+                // REPLACE WITH GPU STUFF.
+                // console.log(this.position)
+                // let kernel = gpu.createKernel(function (fov, pWidth, pHeight, objectList) {
+
+
+                    let width = 2 * Math.tan(degrees_to_radians(this.fov / 2));
+                    let height = width;
+
+
+                    let cellWidth = width / projectedWidth;
+                    let cellHeight = cellWidth;
+
+                //     let tX = this.thread.x;
+                //     let tY = this.thread.y;
+
+                //     let x = -width / 2 + tY * cellWidth;
+                //     let y = -height / 2 + tX * cellHeight;
+                //     let c = this.thread.y * 1000;
+                //     let ray = rayFactory(0,0,-2,x+(0.5 * cellWidth), y+(0.5*cellHeight), 1,5);
+                //     // let ray = new Ray(new Vector3(0,0,-2), new Vector3(x+(0.5 * cellWidth), y+(0.5*cellHeight), 1));
+                //     // ray.direction = new Vector3(x + (0.5 * cellWidth), y + (0.5 * cellHeight), 1);
+                //     // return ray.shootRay(objectList);
+                //     return 1;
+
+                // }).setOutput([projectedWidth, projectedHeight]).setFunctions([degrees_to_radians, rayFactory, shootRay2]);
+
+                // let ray = new Ray(new Vector3(0, 0, -2))
+                // let displayArray = kernel(this.fov, projectedWidth, projectedHeight, objectList);
+                // console.table(displayArray);
+                for (let x = -width / 2; x < width / 2; x += cellWidth) {
+                    let column = []
+                    for (let y = -height /2; y < height / 2; y += cellHeight) {
+                        let ray = new Ray(new Vector3(0,0,-2), new Vector3(x+(0.5 * cellWidth), y+(0.5*cellHeight), 1))
+                        // console.log(Math.round(x*100)/100,Math.round(y*100)/100);
+                        column.push(ray.shootRay(objectList));
+                    }
+                    displayArray.push(column);
+                }
+                return displayArray;
+            }
+
+            renderFrame(objectList) {
+                console.log(this.position);
+                console.log(objectList[0].position);
+                let frame = this.getFrame(objectList);
+                let pixelWidth = windowWidth / projectedWidth;
+                let pixelHeight = pixelWidth;
+
+                for (let y = 0; y < frame.length; y++) {
+                    const column = frame[y];
+
+                    for (let x = 0; x < column.length; x++) {
+                        const element = column[x];
+                        // if (element == false) {
+                        //     continue;
+                        // }
+                        // console.log(element);
+                        let color = "#000000";
+
+                        if (element != false) {
+                            color = element.object.color;
+                        }
+
+                        ctx.fillStyle = color;
+                        ctx.strokeStyle = color
+                        ctx.lineWidth = 1;
+                        ctx.fillRect(x * pixelWidth, y * pixelHeight, pixelWidth, pixelHeight);
+                        ctx.strokeRect(x * pixelWidth, y * pixelHeight, pixelWidth, pixelHeight);
+                        // ctx.fillStyle = "#ffffff";
+                        // ctx.fillText("" + [x, y], (x+0.5)*pixelWidth, (y+0.5)*pixelHeight);
+                        // console.log("?how many")
+
+
+
+                    }
+
+                }
+            }
+        };
+
+
+        class Ray {
+            constructor(position = new Vector3(), direction = new Vector3(), stepSize = 0.1, max = 5) {
+                this.position = position;
+                this.direction = direction;
+                this.stepSize = stepSize;
+                this.max = max;
+                this.traveled = 0;
+            }
+
+            step() {
+                this.position.x += this.direction.normalize().x * this.stepSize
+                this.position.y += this.direction.normalize().y * this.stepSize
+                this.position.z += this.direction.normalize().z * this.stepSize
+                this.traveled += this.stepSize;
+            }
+            revertStep() {
+                this.position.x -= this.direction.normalize().x * this.stepSize
+                this.position.y -= this.direction.normalize().y * this.stepSize
+                this.position.z -= this.direction.normalize().z * this.stepSize
+                this.traveled -= this.stepSize;
+            }
+
+
+            shootRay(objectList) {
+                // Returns a hit object with properties: object, positionVector
+                const precision = 1e-6;
+                let r = 1e4;
+                while (r > 0 && this.traveled < this.max) {
+                    r--;
+                    this.step();
+                    for (const o of objectList) {
+                        const sDist = o.signedDistance(this.position)
+                        // console.log(sDist);
+                        if (Math.abs(sDist) <= precision) {
+                            // console.log("YO");
+                            return {
+                                object: o,
+                                position: this.position
+                            };
+                        }
+                        else if (sDist < -precision) {
+                            this.revertStep();
+                            this.stepSize *= 0.5;
+                        }
+                    }
+                }
+                return false;
+
+            }
+
+        };
+
+        function rayFactory(x, y, z, dx, dy, dz, max = 5) {
+            let ray = {
+                position: {x,y,z},
+                direction: {dx,dy,dz},
+                max: max,
+                step: 0.1,
+                traveled: 0
+            }
+            return ray;
+        }
+
+        function shootRay2(ray, objectList) {
+            function step() {
+                ray.position.x += ray.direction.normalize().x * ray.stepSize;
+                ray.position.y += ray.direction.normalize().y * ray.stepSize;
+                ray.position.z += ray.direction.normalize().z * ray.stepSize;
+                ray.traveled += ray.stepSize;
+            }
+            function revertStep() {
+                ray.position.x -= ray.direction.normalize().x * ray.stepSize;
+                ray.position.y -= ray.direction.normalize().y * ray.stepSize;
+                ray.position.z -= ray.direction.normalize().z * ray.stepSize;
+                ray.traveled -= ray.stepSize;
+            }
+
+            const precision = 0.05;
+            let r = 1e5;
+            while (r > 0 && ray.traveled < ray.max) {
+                r--;
+                ray.step();
+                for (const o of objectList) {
+                    const sDist = o.signedDistance(ray.position);
+                    if (Math.abs(sDist) <= precision) {
+                        return { object: o, position: ray.position };
+                    }
+                    else if (sDist < -precision) {
+                        this.revertStep();
+                        this.stepSize *= 0.5;
+
+                    }
+                }
+            }
+            return { object: null, position: ray.position };
+        }
+
+        let test = new Ray(new Vector3(0, 0, -2), new Vector3(0, 0, 1));
+        let scene = {
+
+            Camera: new Camera(),
+            objects: [new Sphere(new Vector3(0, 0, 0), 0.5)],
+            lights:[]
+        };
+        // test.shootRay(scene.objects);
+        scene.Camera.renderFrame(scene.objects);
+
+
+
+
+
+    </script>
+</body>
+
+</html>
