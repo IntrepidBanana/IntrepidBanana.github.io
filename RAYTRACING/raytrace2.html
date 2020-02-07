@@ -9,12 +9,12 @@
 </head>
 
 <body>
-    <canvas style="background-color: black;width: 90vw; height: 90vw;display: block;margin:auto"></canvas>
+    <canvas style="background-color: black;width: 640px; height: 640px;display: block;margin:auto"></canvas>
     <script src="dist/gpu-browser.min.js"></script>
     <script>
         const aspectRatio = 1;
 
-        const windowWidth = 300;
+        const windowWidth = 1200;
         const fps = 30;
         const windowHeight = windowWidth / aspectRatio;
 
@@ -119,27 +119,27 @@
                 position: new Vector3(5, 0, 0),
                 radius: 1,
                 color: new Vector3(250, 25, 85),
-                specular: .2,
-                lambert: 1,
-                ambient: 0.2
+                specular: .8,
+                lambert: .5,
+                ambient: .3
             },
             {
                 type: "sphere",
                 position: new Vector3(-2, 1.5, 1.5),
-                radius: .5,
+                radius: 3,
                 color: new Vector3(255, 50, 0),
-                specular: .2,
-                lambert: 0.2,
-                ambient: 0.2
+                specular: 1,
+                lambert: 0.5,
+                ambient: 0.1
             },
             {
                 type: "sphere",
                 position: new Vector3(0, 0, 0),
-                radius: 2,
+                radius: 6,
                 color: new Vector3(25, 112, 200),
-                specular: .1,
+                specular: .6,
                 lambert: 1,
-                ambient: 0.2
+                ambient: 0.4
             },
             {
                 type: "sphere",
@@ -338,30 +338,30 @@
         function sleep(ms) {
             return new Promise(resolve => setTimeout(resolve, ms));
         }
-        let n = 0
+        let n = 80
         async function loop() {
             let startTime = new Date().getTime();
             const msPerFrame = 1000 / fps;
-            scene.objects[1].position.z = 4 * Math.cos(degreesToRadians(n));
-            scene.objects[1].position.x = 4 * Math.sin(degreesToRadians(n));
-            scene.objects[1].position.y = 1 * Math.sin(degreesToRadians(n));
+            scene.objects[1].position.z = 8;
+            scene.objects[1].position.x = -2;
+            scene.objects[1].position.y = -5;
 
 
-            scene.objects[0].position.z = 6 * Math.sin(degreesToRadians(n));
+            scene.objects[0].position.z = 8 * Math.sin(degreesToRadians(n));
             scene.objects[0].position.x = 5 * Math.cos(degreesToRadians(n - 25));
-            scene.objects[0].position.y = 1 * Math.cos(degreesToRadians(2 * n + 25));
+            scene.objects[0].position.y = -2 * Math.cos(degreesToRadians(2 * n + 25));
 
             scene.objects[3].position.x = scene.objects[0].position.x + Math.sin(degreesToRadians(n)) * 1.5
             scene.objects[3].position.z = scene.objects[0].position.z + Math.cos(degreesToRadians(n)) * 1.5
             scene.objects[3].position.y = scene.objects[0].position.y + Math.sin(degreesToRadians(n)) * Math.sin(degreesToRadians(n)) * 1.5
 
-            n += 2;
+            n = 50;
             render(scene);
             // requestAnimationFrame(loop);
             let endTime = new Date().getTime();
             let elapsedTime = endTime - startTime;
             await sleep(msPerFrame - elapsedTime);
-            loop();
+            // loop();
         }
 // 
         loop();
