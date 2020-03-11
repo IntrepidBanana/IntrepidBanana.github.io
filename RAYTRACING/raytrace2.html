@@ -5,16 +5,25 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
-    <title>Document</title>
+    
+    <link rel='stylesheet' type='text/css' media='screen' href='reset.css'>
+    <title>Ray Tracing - Lauris Petlah</title>
 </head>
 
 <body>
-    <canvas style="background-color: black;width: 640px; height: 640px;display: block;margin:auto"></canvas>
+    <canvas style="background-color: black;width: 480px; height: 480px;display: block;margin:auto"></canvas>
+    <div style="margin: auto; width: 480px;">
+        <h1 style="line-height: 16px;">Ray tracing demo</h1>
+        <p>A basic ray tracing engine built in HTML and JavaScript. Each pixel is calculated based on a recursive ray trace algorithm which fires a ray until contact is made, and fires another set of rays from the contact point. Doing this recursively multiple times with different parameters can give Lambertian shadows, and Specular reflections. On close inspection one can see several interesting properties: reflections within reflections, shadows within shadows and compounding reflections.
+        </p>
+        <p>-Lauris Petlah</p>
+    </div>
+
     <script src="dist/gpu-browser.min.js"></script>
     <script>
         const aspectRatio = 1;
 
-        const windowWidth = 1200;
+        const windowWidth = 480;
         const fps = 30;
         const windowHeight = windowWidth / aspectRatio;
 
@@ -149,7 +158,6 @@
                 specular: 0.1,
                 lambert: .5,
                 ambient: 0.2
-                // emission: true
             }
         ]
         function clamp(x, min, max) {
