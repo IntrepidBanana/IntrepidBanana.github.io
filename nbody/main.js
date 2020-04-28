@@ -877,14 +877,14 @@ function addParticles(n, mass, velocity) {
             screenToWorld(320, 320),
             mass,
             0,
-            5000,
+            0,
             "#" + randomHex(6),
             ("p")
         );
         
         p.name = "p: " + p.id;
         p.radius = Math.pow(p.mass, 1 / 4) / 10;
-        p.radius = 0.5
+        // p.radius = 0.5
         const a = Math.random()*360
         const unitAngleVector = vector(Math.cos(a),Math.sin(a));
         const d = Math.random()*712/2;
@@ -895,8 +895,8 @@ function addParticles(n, mass, velocity) {
             x: unitPositionRel.y,
             y: -unitPositionRel.x
         }
-
-        p.velocity = scaleVector(vBasis,velocity*(Math.floor(Math.random()*2)-1))
+        p.velocity = Math.random()>0.5? scaleVector(vBasis,velocity): scaleVector(vBasis,-velocity);
+        // p.velocity = scaleVector(vBasis,velocity)
         p.velocity = addVector(p.velocity,scaleVector(unitPositionRel,-0.001))
         setOfParticles.push(p);
 
@@ -904,5 +904,14 @@ function addParticles(n, mass, velocity) {
 }
 gameLoop();
 initializeGameState();
-addParticles(1000, 1e8, .02);
+addParticles(1, 7e8, 0);
+// addParticles(100, 1e6, .05);
+addParticles(800, 6e4, .1);
+
+// addParticle(a1,setOfParticles);
+// addParticle(a2,setOfParticles);
+// debug.displayCenterCircle = true
+// debug.displayParticleName=true
+debug.trackBiggest=false;
+// timeScalar=0.01
 // addParticles(1000, 1e8, .01);
