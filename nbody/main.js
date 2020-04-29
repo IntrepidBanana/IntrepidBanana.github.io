@@ -1,13 +1,13 @@
 let frameRate = 60;
-let secondsOfPlay = 1000;
-let timeScalar = .2;
-let repetition = frameRate * secondsOfPlay;
+let secondsOfPlay = -1;
+let time = 0;
+let timeScalar =8;
+let repetition = 1;
 let globalId = 0;
 let height = 0;
 let width = 0;
 
-let pixelScale = 1// pixel/meter
-
+let pixelScale = 0.05// pixel/meter
 const debug = {
     displayDebug: false,
     focusId: 3,
@@ -24,13 +24,15 @@ const debug = {
     displayParticleName: false,
     pause: false,
     secondsPerReadout: 1,
-    trailLength: 10,
+    trailLength: 50,
     trailsOn: true,
-    pruneOffScreenParticles: false,
-    allowScreenDrag: true,
+    pruneOffScreenParticles: true,
+    allowScreenDrag: false,
     isScreenMoving: false,
     wireFrame: false,
-    drawGroups: true
+    drawGroups: false,
+    shootParticles:false,
+    msPerParticleFire: 100
 };
 
 
@@ -196,7 +198,7 @@ function worldToScreen(x, y) {
 }
 
 function validTimeForReadout() {
-    return repetition % (debug.secondsPerReadout * frameRate) === 0
+    return time % (debug.secondsPerReadout * frameRate) === 0
 }
 
 
@@ -303,7 +305,7 @@ function updatePositionOfParticle(p, t) {
     }
     const directVector = subtractVector(p.position, screenToWorld(width / 2, height / 2));
     const dist = mag(directVector);
-    if (dist > (width / pixelScale) * 2 && debug.pruneOffScreenParticles) {
+    if (dist > mag(screenToWorld(width,height))*2&& debug.pruneOffScreenParticles) {
         removeParticleByID(p.id, setOfParticles);
     }
 }
@@ -652,17 +654,21 @@ function getParticleRadius(p) {
     return radius;
 }
 function drawTrail(p, ctx) {
-    ctx.beginPath();
-    // ctx.moveTo(updatedVector.x,updatedVector.y);
+    ctx.beginPath()
+    ctx.lineWidth = p.radius*pixelScale*2
+    ctx.strokeStyle = p.color;
+    ctx.lineJoin = "round";
+    ctx.lineCap = "round"
+
     for (const worldPosition of p.trail) {
         const v = worldToScreenVector(worldPosition);
         ctx.lineTo(v.x, v.y);
     }
-    // ctx.closePath();
-    ctx.lineWidth = p.radius*pixelScale*2
-    ctx.strokeStyle = p.color;
+    ctx.globalAlpha = 0.5;
     ctx.stroke();
+    ctx.globalAlpha = 1;
     ctx.closePath();
+    
 }
 function drawForceVector(p, ctx) {
     ctx.beginPath();
@@ -695,6 +701,7 @@ function draw() {
 
     height = canvas.height;
     width = canvas.width;
+    // ctx.fillStyle = 'rgba(255,255,255,0.96)';
     ctx.fillRect(0, 0, canvas.width, canvas.height);
     if (debug.trackFocus) {
         trackParticle();
@@ -704,11 +711,12 @@ function draw() {
         ctx.beginPath();
         let screenPosition = addVector(worldToScreenVector(addVector(p.position, p.offset)), vector(0, 0));
         ctx.moveTo(screenPosition.x, screenPosition.y);
-        ctx.fillStyle = p.color;
         let r = p.radius * pixelScale;
         // ctx.fillRect(screenPosition.x - r, screenPosition.y - r, 2 * r, 2 * r);
         ctx.ellipse(screenPosition.x, screenPosition.y, r, r, 0, 0, 360);
         ctx.closePath();
+        p.color = "rgba(255,255,255,1)"
+        ctx.fillStyle = p.color;
         ctx.strokeStyle = p.color;
         ctx.lineWidth = 5;
         if (debug.wireFrame) {
@@ -783,7 +791,8 @@ async function gameLoop() {
         if (!debug.pause) {
             update(msPerFrame * timeScalar);
             draw();
-            repetition--;
+            // repetition--;
+            time++;
 
         }
 
@@ -800,10 +809,14 @@ function sleep(ms) {
 }
 
 function handleDragStart(event) {
+    
+    debug.mouse = vector(event.clientX,event.clientY);
+    shootParticles(50,7e10,.2,screenToWorldVector(debug.mouse),2)
     if (!debug.allowScreenDrag) {
         return;
     }
     debug.isScreenMoving = true;
+
 }
 
 function handleDragEnd(event) {
@@ -850,13 +863,16 @@ function handleKeyDown(event) {
     }
     timeScalar = Math.max(0, timeScalar);
 }
+function mousePressDown(event){
 
+}
 function initializeGameState() {
     document.onmousedown = handleDragStart;
     document.onmouseup = handleDragEnd;
     document.onmousemove = handleDragDuring;
     document.onwheel = handleScroll;
     document.onkeydown = handleKeyDown;
+    
     globalId = 0;
 
     setOfParticles = [
@@ -896,22 +912,49 @@ function addParticles(n, mass, velocity) {
             y: -unitPositionRel.x
         }
         p.velocity = Math.random()>0.5? scaleVector(vBasis,velocity): scaleVector(vBasis,-velocity);
-        // p.velocity = scaleVector(vBasis,velocity)
-        p.velocity = addVector(p.velocity,scaleVector(unitPositionRel,-0.001))
+        p.velocity = scaleVector(vBasis,velocity)
+        // p.velocity = addVector(p.velocity,scaleVector(unitPositionRel,-0.001))
         setOfParticles.push(p);
 
     }
 }
+function shootParticles(n,mass,velocity, location,variance){
+    for (let i = 0; i < n; i++) {
+        let pos =vector( Math.random()*2-1, Math.random()*2-1)
+        pos = unitVector(pos);
+
+        const dist = magnitude(width/2,height/2);
+        pos = scaleVector(pos,dist);
+        pos = screenToWorldVector(addVector(pos,vector(width/2,height/2)));
+        let vectorToLocation = subtractVector(location,pos);
+        vectorToLocation = unitVector(vectorToLocation);
+        vectorToLocation = addVector(vectorToLocation,scaleVector(vector( Math.random()*2-1, Math.random()*2-1),variance));
+        vectorToLocation = unitVector(vectorToLocation);
+        let p = particle(
+            pos,
+            mass,
+            scaleVector(vectorToLocation,velocity),
+            Math.pow(mass, 1 / 4) / 10,
+            "#ffffff",
+            "i"
+        )
+        addParticle(p,setOfParticles);
+
+        
+    }
+}
 gameLoop();
 initializeGameState();
-addParticles(1, 7e8, 0);
+// addParticles(1, 1e10, 0);
 // addParticles(100, 1e6, .05);
-addParticles(800, 6e4, .1);
-
+// addParticles(800, 6e4, .1);
+addParticles(500, 2e9, .05);
+pixelScale = 0.05 * (document.documentElement.clientWidth/720)
+    // shootParticles(50,7e10,.2,screenToWorld(width/2,height)),1)
+// shootParticles(500,2e9,0.5,screenToWorld(width/2,height/2),1)
 // addParticle(a1,setOfParticles);
 // addParticle(a2,setOfParticles);
 // debug.displayCenterCircle = true
 // debug.displayParticleName=true
-debug.trackBiggest=false;
 // timeScalar=0.01
 // addParticles(1000, 1e8, .01);
