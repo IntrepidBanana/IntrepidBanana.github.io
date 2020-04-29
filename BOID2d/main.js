@@ -14,93 +14,72 @@ let c = document.getElementsByTagName("canvas")[0];
 let ctx;
 let height, width;
 
-let mouseCollisionRadius = 35;
+let mouseCollisionRadius = 100;
 let mouseX = -100, mouseY = -100;
 
 
 let boids = [];
-let boidNumber = 150;
-let boidSize = 20
+let boidNumber = 80;
+let boidSize = 30
 
 let biggestBoidPack = [];
 
 let globalFOV = 300;
-let globalViewDistance = 30;
-let globalSpeed = 3;
+let globalViewDistance = 60;
+let globalSpeed = 2;
 
-let seperationMinimum = 20;
-let seperationSpeed = 2.5;
+let seperationMinimum = 40;
+let seperationSpeed = 0.05;
 
-let alignmentSpeed = .125;
+let alignmentSpeed = .075;
 
-let cohesionSpeed = .0025;
+let cohesionSpeed = .004;
 
 let debug = true;
 let debugNear = false;
+let flags = {
+    lineWidth: 5,
+    showBiggestFlock: false,
+    showFieldOfView: false,
+    wiggle: 0,
+    wiggleIntensity: 8,
+    wigglePeriod: 2000,
+    splashScreen: {
+        display: true,
+        maxTime: 500,
+        timer: 500,
+    }
+}
 
 function resizeCanvas() {
     // width = c.parentElement.clientWidth;
     // height = c.parentElement.clientHeight;
+    // width = document.documentElement.clientWidth;
+    // height = document.documentElement.clientHeight;
+
     width = window.innerWidth;
     height = window.innerHeight;
     c.width = width;
     c.height = height;
-
     ctx = c.getContext("2d");
-    ctx.canvas.width = width;
-    ctx.canvas.height = height;
+    // ctx.canvas.width = width;
+    // ctx.canvas.height = height;
 
 
-    console.log(width, height);
 
-    document.getElementById("numberOfBoids").max = 200
-    if (window.innerWidth >= 768) {
-        document.getElementById("numberOfBoids").max = 300;
-    }
-    if (window.innerWidth >= 1024) {
-        document.getElementById("numberOfBoids").max = 500;
-    }
+    // document.getElementById("numberOfBoids").max = 200
+    
 }
 
 window.onload = function () {
     window.addEventListener('resize', resizeCanvas, false);
     resizeCanvas();
-    // ctx.canvas.width = window.innerHeight;
-    // ctx.canvas.height = window.innerHeight;
-    document.getElementById("numberOfBoids").oninput = function () {
-        boidNumber = document.getElementById("numberOfBoids").value;
-    }
-    document.getElementById("fieldOfView").oninput = function () {
-        globalFOV = document.getElementById("fieldOfView").value;
-    }
-    document.getElementById("viewDistance").oninput = function () {
-        globalViewDistance = document.getElementById("viewDistance").value;
-    }
-    document.getElementById("seperation").oninput = function () {
-        seperationMinimum = document.getElementById("seperation").value;
-    }
-    document.getElementById("alignment").oninput = function () {
-        alignmentSpeed = document.getElementById("alignment").value / 100;
-    }
-    document.getElementById("cohesion").oninput = function () {
-        cohesionSpeed = document.getElementById("cohesion").value / 10000;
-    }
-    document.getElementById("size").oninput = function () {
-        boidSize = document.getElementById("size").value;
-    }
-    document.getElementById("speed").oninput = function () {
-        globalSpeed = document.getElementById("speed").value;
-
-    }
-    document.getElementById("debug").onclick = function () {
-        debug = document.getElementById("debug").checked;
-    }
 
     document.addEventListener('mousemove', onMouseUpdate, false);
     document.addEventListener('mouseenter', onMouseUpdate, false);
     document.addEventListener("touchstart", onMouseUpdate, false);
     document.addEventListener("touchmove", onMouseUpdate, false);
-    document.addEventListener("touchend", function(){
+    document.addEventListener("touchend", function () {
         mouseX = -100;
         mouseY = -100;
     }, false);
@@ -130,7 +109,8 @@ async function gameLoop() {
     while (repetition > 0) {
 
         let startTime = new Date().getTime();
-        ctx.fillStyle = "#3c1361";
+        resizeCanvas();
+        ctx.fillStyle = "#FFFFFF";
         ctx.fillRect(0, 0, width, height);
         if (boids.length > boidNumber) {
             boids.pop();
@@ -140,7 +120,7 @@ async function gameLoop() {
         }
         updateBoids();
         biggestBoidPack = largestBoid();
-        draw();
+        draw(msPerFrame);
 
         let endTime = new Date().getTime();
         let elapsedTime = endTime - startTime;
@@ -149,13 +129,12 @@ async function gameLoop() {
     }
 }
 
-function draw() {
-    // ctx.beginPath();
-
+function draw(t) {
+    
     for (const boid of boids) {
-        drawBoid(boid);
+        drawBoid(boid, t);
     }
-
+    flags.wiggle += t;
 
 }
 
@@ -183,12 +162,6 @@ function makeBoid(id = 0, initialPosition = [0, 0], initialDirection = 0, initia
         fov: initialFov,
         selected: false,
         nearby: [],
-        updateForwardVector: function () {
-            this.forwardVector = normalizeVector({ x: Math.cos(this.direction), y: Math.sin(this.direction) });
-        },
-        updateDirection: function () {
-            this.direction = (Math.atan2(this.forwardVector.y, this.forwardVector.y) + 360) % 360;
-        },
         addChangeInVelocity: function (dx, dy) {
             let x = this.forwardVector.x * this.speed;
             let y = this.forwardVector.y * this.speed;
@@ -222,11 +195,11 @@ function makeBoid(id = 0, initialPosition = [0, 0], initialDirection = 0, initia
 }
 
 function onMouseUpdate(e) {
-    if(e.type == 'touchstart' || e.type == 'touchmove' || e.type == 'touchend' || e.type == 'touchcancel'){
+    if (e.type == 'touchstart' || e.type == 'touchmove' || e.type == 'touchend' || e.type == 'touchcancel') {
         var touch = e.touches[0] || e.changedTouches[0];
         mouseX = touch.pageX;
         mouseY = touch.pageY;
-    } else if (e.type == 'mousedown' || e.type == 'mouseup' || e.type == 'mousemove' || e.type == 'mouseover'|| e.type=='mouseout' || e.type=='mouseenter' || e.type=='mouseleave') {
+    } else if (e.type == 'mousedown' || e.type == 'mouseup' || e.type == 'mousemove' || e.type == 'mouseover' || e.type == 'mouseout' || e.type == 'mouseenter' || e.type == 'mouseleave') {
         mouseX = e.clientX;
         mouseY = e.clientY;
     }
@@ -338,7 +311,7 @@ function seperationMeasure(boid, nearby) {
             let dy = delta * Math.sin(theta);
             // deltax += dx*0.1;
             // deltay += dy*0.1;
-            boid.addChangeInVelocity(dx * Math.pow(10, -seperationSpeed), dy * Math.pow(10, -seperationSpeed));
+            boid.addChangeInVelocity(dx * seperationSpeed, dy * seperationSpeed);
         }
 
     }
@@ -373,26 +346,26 @@ function cohesionMeasure(boid, nearby) {
 function keepBoidInBounds(boid) {
     let x = boid.x, y = boid.y;
 
-    let c = .99;
-
+    let c = .97;
+    let s = 0.5
     if (x < -width * (c - 1)) {
         x = width * c;
-        boid.addChangeInVelocity(10, 0);
+        boid.addChangeInVelocity(s, 0);
     }
     else if (x > width * c) {
         x = -width * (c - 1);
-        boid.addChangeInVelocity(-10, 0);
+        boid.addChangeInVelocity(-s, 0);
     }
 
     if (y < -height * (c - 1)) {
         y = height * c;
 
-        boid.addChangeInVelocity(0, 10);
+        boid.addChangeInVelocity(0, s);
     }
     else if (y > height * c) {
         y = -height * (c - 1);
 
-        boid.addChangeInVelocity(0, -10);
+        boid.addChangeInVelocity(0, -s);
     }
 
     // boid.x = x;
@@ -422,10 +395,10 @@ function toDegrees(radians) {
 }
 
 function drawPolygon(polygon, centerx, centery, dir = 0, color = "#000000") {
-    let ox = polygon[0][0], oy = polygon[0][1];
+    // let ox = polygon[0][0], oy = polygon[0][1];
     ctx.beginPath();
-    ctx.moveTo(ox, oy);
 
+    // ctx.moveTo(ox, oy);
     for (const point of polygon) {
         let px = point[0], py = point[1];
 
@@ -437,45 +410,43 @@ function drawPolygon(polygon, centerx, centery, dir = 0, color = "#000000") {
 
     }
     ctx.closePath()
-    ctx.fillStyle = color;
-    ctx.fill();
+    // ctx.fillStyle = color;
+    // ctx.fill();
+    ctx.strokeStyle = color;
+    ctx.lineWidth = flags.lineWidth;
+    ctx.stroke();
 }
-function drawBoid(boid) {
+function drawBoid(boid, t) {
     const size = boidSize;
     let x = boid.x, y = boid.y;
     let dir = boid.getDirectionDegrees();
-    let color = "#663a82";
+    let color = "#000000";
+    // let cosmetic = Math.sin((Math.PI * 2 / flags.wigglePeriod) * (flags.wiggle + t)) * flags.wiggleIntensity;
+    // dir += cosmetic;
+    // cosmetic = -cosmetic / 4;
+    let cosmetic =0
     let polygon = [
-        [(x - size * 0.3), y],
-        [(x) - size * 0.4, y - size * .25],
+        [(x - size * 0.3), y + cosmetic],
+        [(x) - size * 0.4, y - size * .25 + cosmetic],
         [(x) + size * 0.3, y],
-        [(x) - size * 0.4, y + size * .25],
-        [(x - size * 0.3), y]
+        [(x) - size * 0.4, y + size * .25 + cosmetic],
+        [(x - size * 0.3), y + cosmetic]
     ]
-    if (boid.selected && debug) {
-        color = "#ffffff";
-        // ctx.beginPath();
-        // ctx.moveTo(x, y);
-        // ctx.lineTo(boid.forwardVector.x * 100 + x, boid.forwardVector.y * 100 + y);
-        // ctx.closePath();
-        // ctx.strokeStyle = "#ffffff";
-        // ctx.stroke();
-    }
 
-    if (debug && boid.selected) {
+    if (flags.showFieldOfView && boid.selected) {
         ctx.beginPath()
         ctx.lineTo(x, y);
         ctx.ellipse(x, y, boid.viewDistance, boid.viewDistance, boid.getDirectionRadians(), toRadians(boid.fov) / 2 * -1, toRadians(boid.fov) / 2);
         // ctx.arc(x, y, boid.viewDistance, toRadians(boid.direction), toRadians(boid.fov)+toRadians(boid.direction))
         ctx.closePath();
-        ctx.globalAlpha = 0.1;
-        ctx.fillStyle = "#e8ebff";
+        ctx.globalAlpha = .7;
+        ctx.fillStyle = "#000000";
         ctx.fill();
         ctx.globalAlpha = 1;
     }
-    if (biggestBoidPack.includes(boid) && debug) {
+    if (biggestBoidPack.includes(boid) && flags.showBiggestFlock) {
 
-        color = "#123ffa"
+        color = "#ff0000"
     }
     drawPolygon(polygon, boid.x, boid.y, toRadians(dir), color);
 
@@ -489,8 +460,6 @@ function drawBoid(boid) {
 
 
 }
-
-
 
 
 
