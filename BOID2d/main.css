@@ -28,7 +28,7 @@ span{
     margin: auto;
 }
 
-#splashScreen,#splashScreenSmall{
+.splashScreen,.splashScreenSmall{
     position: absolute;
     display: inline-block;
     text-align: left;
@@ -44,9 +44,13 @@ span{
     -o-animation: fadeOut cubic-bezier(.87,0,.73,.66) 5s;
     -ms-animation: fadeOut cubic-bezier(.87,0,.73,.66) 5s;
 }
-#splashScreenSmall{
+.splashScreenSmall{
     left: 32px;
     font-size: 8px;
+}
+
+#mouse{
+  display: none;
 }
 
 @keyframes fadeOut{
@@ -124,25 +128,31 @@ span{
 
 
 
-@media only screen and (min-width: 540px){
-    #splashScreen{
-
-      font-size: 200px;
-      line-height: 150px;
-    } 
-    #splashScreenSmall{
-        font-size: 16px;
-    }
-}
 @media only screen and (min-width: 320px){
-  #splashScreen{
+  .splashScreen{
 
     font-size: 144px;
     line-height: 110px;
   } 
-  #splashScreenSmall{
-      font-size: 12px;
+  .splashScreenSmall{
+      font-size: 16px;
   }
     
 } 
 
+@media only screen and (min-width: 540px){
+  .splashScreen{
+
+     font-size: 200px;
+     line-height: 150px;
+   } 
+   .splashScreenSmall{
+       font-size: 32px;
+   }
+   #mouse{
+     display: inline-block;
+   }
+   #touch{
+     display:none;
+   }
+}
