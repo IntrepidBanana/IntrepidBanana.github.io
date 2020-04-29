@@ -950,7 +950,7 @@ initializeGameState();
 // addParticles(800, 6e4, .1);
 if(document.documentElement.clientWidth< 540){
 
-    addParticles(150, 2e9, .05);
+    addParticles(50, 2e10, .05);
 }
 else{
 
