@@ -948,7 +948,14 @@ initializeGameState();
 // addParticles(1, 1e10, 0);
 // addParticles(100, 1e6, .05);
 // addParticles(800, 6e4, .1);
-addParticles(500, 2e9, .05);
+if(document.documentElement.clientWidth< 540){
+
+    addParticles(150, 2e9, .05);
+}
+else{
+
+    addParticles(500, 2e9, .05);
+}
 pixelScale = 0.05 * (document.documentElement.clientWidth/720)
     // shootParticles(50,7e10,.2,screenToWorld(width/2,height)),1)
 // shootParticles(500,2e9,0.5,screenToWorld(width/2,height/2),1)
