@@ -80,7 +80,7 @@ span, a {
     left: 50%;
     transform: translateX(-50%);
 
-    background-image: url("images/MountainsDarkCropped720.png");
+    background-image: url("Images/MountainsDarkCropped720.png");
     background-position: center;
     background-repeat: no-repeat;
     background-size: cover;
@@ -356,7 +356,7 @@ form>button{
         --card-size: 180px;
     }
     .bg-mountains{
-        background-image: url("images/MountainsBig1440.png");
+        background-image: url("Images/MountainsBig1440.png");
         max-height: 640px;
         max-width: 200%;
         background-size: cover;
@@ -369,7 +369,7 @@ form>button{
 }
 @media screen and (min-width: 1024px) {
     .bg-mountains{
-        background-image: url("images/MountainsBig1440.png");
+        background-image: url("Images/MountainsBig1440.png");
         max-height: 1024px;
         max-width: 1392px;
         background-size: cover;
@@ -382,7 +382,7 @@ form>button{
 }
 @media screen and (min-width: 1392px) {
     .bg-mountains{
-        background-image: url("images/MountainsBig2880.png");
+        background-image: url("Images/MountainsBig2880.png");
         max-height: 2880px;
         max-width: 100%;
         background-size: contain;
