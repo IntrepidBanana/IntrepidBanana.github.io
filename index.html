@@ -4,30 +4,122 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta http-equiv="X-UA-Compatible" content="ie=edge">
-    <link rel='stylesheet' type='text/css' media='screen' href='reset.css'>
-    <link rel='stylesheet' type='text/css' media='screen' href='mainPage.css'>
-    <title>Site Map</title>
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="main.css">
+    <link rel="shortcut icon" href="images/favicon.png" type="image/x-icon">
+    <title>>LaurisPetlah.</title>
+
 </head>
 
 <body>
-    <main>
+    <div class="bg-mountains-container">
+        <div class="bg-mountains"></div>
+    </div>
 
-        <div class="wrapper">
-            <div id="sort">
-                <a href="https://laurispetlah.github.io/Sorting/sort.html">Sorting Algorithms</a>
-            </div>
-            <div id="boid">
-                <a href="https://laurispetlah.github.io/BOID2d/boid2d.html">Emergent Behaviours</a>
-            </div>
-            <div id="ray">
-                <a href="https://laurispetlah.github.io/RAYTRACING/raytrace2.html">Ray Tracing</a>
-            </div>
-            <div id="nbody">
-                <a href="https://laurispetlah.github.io/nbody/index.html">Nbody</a>
+    <nav class="nav-bar">
+        <span id="laurispetlah">
+            > <b>lauris</b>petlah.
+                </span>
+        <a href="#contact" class="button small">
+            <span>Contact.</span>
+            <img src="images/link16.svg">
+        </a>
+    </nav>
+
+    <main>
+        <section class="landing">
+
+            <header class="main-title">
+                <div class="title">
+                    <h1>
+                        i design
+                    </h1>
+                    <h1>
+                        <b>web experiences.</b>
+                    </h1>
+                </div>
+
+                <a href="#contact" class="button">
+                Lets talk.
+                <img src="images/link24.svg">
+            </a>
+            </header>
+            <a href="#work" class="to-next-section-anchor">
+            work
+            <img src="images/chevrons24.svg" alt="">
+        </a>
+        </section>
+
+
+
+        <section id="work" class="work-container mobile">
+            <div class="card toggle">
+                <a href="https://github.com/LaurisPetlah/Chrome-Extension-Thoughts" class="card-title">
+                    Thoughts: Universal Wishlist.
+                    <img src="images/link16.svg">
+                </a>
+                <img class="card-img" src="images/PNG/Thoughts.png">
             </div>
             
-        </div>
+            <div href="https://laurispetlah.github.io/Value/" class="card">
+                <a class="card-title">
+                Value
+                <img src="images/link16.svg">
+                </a>
+                <img class="card-img" src="images/PNG/Value2.png">
+            </div>
+
+            <div class="card">
+                <a href="https://laurispetlah.github.io/Nbody/" class="card-title">
+                N-Body Simulation
+                <img src="images/link16.svg">
+                </a>
+                <img class="card-img" src="images/PNG/Nbody2.png">
+            </div>
+
+            <div class="card">
+                <a href="https://laurispetlah.github.io/EmergentBehaviours/" class="card-title">
+                Emergent Behaviours: Boids
+                <img src="images/link16.svg">
+                </a>
+                <img class="card-img" src="images/PNG/Boid2.png">
+            </div>
+
+            <div class="card">
+                <a href="https://laurispetlah.github.io/Raytracing/" class="card-title">
+                Recursive Ray Tracing
+                <img src="images/link16.svg">
+                </a>
+                <img class="card-img" src="images/PNG/RayTrace2.png">
+            </div>
+
+
+
+            <a href="https://github.com/laurispetlah" class="button small github-anchor">
+                View all projects on
+                <img class="github" src="images/PNG/GitHub_Logo_White.png" alt="Github">
+                <img src="images/link16.svg">
+            </a>
+        </section>
+        <footer id="contact">
+            <div class="form-wrapper">
+
+                <header>
+                    <h1><b>Contact.</b></h1>
+                    <span>Interested in working with me?<br><b>Send me a message.</b></psan>
+                    </header>
+                    <form action="https://formspree.io/xzbjbqqz" method="POST">
+                            <label>Name</label>
+                            <input type="text" name="name" required="" placeholder="First name, Last name">
+                            <label>Email</label>
+                            <input type="text" type="email" required="" placeholder="Your@email.com" required>
+                            <label>Message</label>
+                            <textarea name="message" spellcheck="false" required="" placeholder="Your message..."></textarea>
+                            <button type="submit" class="button small">Submit</button>
+                     </form>
+                </div>
+            </footer>
+
     </main>
 </body>
 

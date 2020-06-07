@@ -1,0 +1,396 @@
+*,
+*::before,
+*::after {
+    box-sizing: border-box;
+    padding: 0;
+    margin: 0;
+    z-index: 0;
+
+    color: white;
+    font-family: 'Montserrat', sans-serif;
+    text-align: center;
+    scroll-behavior: smooth;
+
+
+}
+
+
+:root{
+    --dark-gray: #282929;
+    --med-gray: #333333;
+    --standard-shadow: 0px 0px 16px rgba(0, 0, 0, 0.3);
+    --gradient: radial-gradient(
+        200% 200% at -75% 175%, #03E8BF 0%, #282929 100%);
+    font-size: 62.5%;
+
+    --card-size:124px
+
+
+}
+
+html{
+    background-color: var(--dark-gray);
+}
+
+body{
+    overflow-x: hidden;
+    background-color: var(--dark-gray);
+}
+
+b{
+    font-weight: 800;
+}
+
+h1{
+    font-size: 3.6rem;
+    font-weight: normal;
+}
+span, a {
+    font-size: 1.6rem;
+}
+
+.github{
+    height: 2.4rem;
+    width: auto;
+    display: inline-block;
+}
+.button.github-anchor{
+    gap: 2px;
+    grid-column-start: 1;
+    grid-column-end: -1;
+    justify-self: center;
+}
+
+
+.bg-mountains-container{
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    overflow: hidden;
+}
+
+.bg-mountains{
+    display: block;
+
+    width: 100vw;
+    max-width: 580px;
+    height: 100%;
+
+    position: absolute;
+    left: 50%;
+    transform: translateX(-50%);
+
+    background-image: url("images/MountainsDarkCropped720.png");
+    background-position: center;
+    background-repeat: no-repeat;
+    background-size: cover;
+    background-color: var(--dark-gray);
+
+    
+}
+
+.nav-bar{
+    position: fixed;
+    
+    /* display: block; */
+    
+    display: grid;
+    justify-content: center;
+    align-items: center;
+    justify-items: center;
+    grid-auto-flow: column;
+    gap: 3.6em;
+
+    height: 72px;
+    padding: 16px;
+
+    background-color: var(--dark-gray);
+    box-shadow: var(--standard-shadow);
+    width: 100%;
+    max-width: 100vw;
+    left: 0;
+    top: 0;
+    z-index: 2;
+}
+
+#laurispetlah{
+    display: inline-block;
+    width: -webkit-max-content;
+    width: -moz-max-content;
+    width: max-content;
+
+}
+
+main{
+    display: grid;
+    justify-content: center;
+    align-items: center;
+    justify-items: center;
+    grid-auto-rows: auto;
+    grid-template-columns: 100vw;
+    width: 100%;
+}
+.landing{
+    height: 92vh;
+    width: 100%;
+    z-index: 1;
+}
+
+.main-title{
+    position: relative;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 100%;
+    padding: 32px;
+    text-shadow: var(--standard-shadow);
+
+    display: grid;
+    align-items: center;
+    justify-items: center;
+    gap: 16px;
+
+    
+}
+
+a{
+    text-decoration: none;
+    cursor: pointer;
+}
+.button{
+    display: grid;
+    justify-content: center;
+    align-items: center;
+    justify-items: center;
+    height: -webkit-max-content;
+    height: -moz-max-content;
+    height: max-content;
+    width: -webkit-max-content;
+    width: -moz-max-content;
+    width: max-content;
+    grid-auto-flow: column;
+    grid-auto-rows: -webkit-max-content;
+    grid-auto-rows: max-content;
+    font-size: 2.4rem;
+    gap: 12px;
+    padding: 16px;
+    border-radius: 4px;
+    box-shadow: var(--standard-shadow);
+    background: var(--gradient);
+    transition: all ease-in 125ms;
+}
+.button.small{
+    font-size: 1.6rem;
+    padding: 1.2rem;
+}
+
+.button:active{
+    transform: scale(0.9);
+    -webkit-filter: brightness(0.5);
+            filter: brightness(0.5);
+    transition: all ease-out 50ms;
+}
+
+
+.to-next-section-anchor{
+    z-index: 1;
+    position: absolute;
+    bottom: 6.4rem;
+    width: 100%;
+    padding: 16px;
+    display: grid;
+    justify-content: center;
+    align-items: center;
+    justify-items: center;
+    font-size: 2.4rem;
+}
+
+.work-container{
+    z-index: 0;
+    position: relative;
+    top: -6.4rem;
+    scroll-snap-align: start;
+    height: auto;
+    width: 100%;
+    max-width: 1392px;
+    padding: 32px;
+    padding-top: 96px;
+    display: grid;
+    justify-content: center;
+    align-items: center;
+    justify-items: center;
+    grid-auto-flow: dense;
+    grid-template-columns: repeat(auto-fill, calc(var(--card-size) * 2));
+    grid-auto-rows: var(--card-size);
+    row-gap: 16px;
+    -moz-column-gap: 24px;
+         column-gap: 24px;
+}
+
+.card{
+    display: block;
+    position: relative;
+    width: 100%;
+    max-width: 360px;
+    height: 100%;
+    margin: auto;
+
+    box-shadow: var(--standard-shadow);
+    transition: all ease-in-out 200ms;
+
+    background-color: var(--dark-gray);
+}
+
+.card-img{
+    width: 100%;
+    height: 100%;
+    max-height: var(--card-size);
+    
+    -o-object-fit: cover;
+       object-fit: cover;
+    
+}
+
+.card-title{
+    position: absolute;
+    display: grid;
+    justify-content: center;
+    align-items: end;
+    justify-items: center;
+    grid-auto-flow: column;
+    gap:4px;
+    text-align: end;
+    padding: 1.2rem;
+    height:100%;
+    width: 100%;
+    background-color: rgba(0, 0, 0, 0.3);
+    /* transform: translate(-50%, -50%); */
+    text-shadow: var(--standard-shadow);
+    margin: auto;
+    z-index: 1;
+
+    visibility: visible;
+    opacity: 1;
+
+    transition: opacity ease-in-out 200ms, visibility ease-in-out 200ms;
+}
+.card:hover{
+    transform: scale(1.1);
+}
+.card.toggle>.card-info{
+    display: grid;
+    justify-content: center;
+    align-items: center;
+    justify-items: center;
+    font-size: 1.6rem;
+}
+
+
+footer{
+    position: relative;
+    
+    width: 100%;
+    height:100vh;
+    max-height: 360px;
+
+    margin-bottom: 25vh;
+}
+
+.form-wrapper{
+    position: absolute;
+    top: 50%;
+    transform: translateY(-40%);
+    width: 100%;
+    margin: auto;
+    display: grid;
+    justify-content: center;
+    align-items: center;
+    justify-items: center;
+}
+
+form{
+    /* position: absolute;
+    top: 50%; */
+    display: grid;
+    justify-content: center;
+    align-items: center;
+    justify-items: center;
+    width: 100%;
+    grid-template-columns: 100%;
+    margin: 32px;
+    max-width: 360px;
+}
+form>*{
+    outline: none;
+    border: none;
+
+}
+
+form>label{
+    padding-top: 12px;
+    font-size: 1.6rem;
+    justify-self: left;
+}
+form>input, textarea{
+    text-align: left;
+    padding: 0.4rem;
+    background: none;
+    border-bottom: 1px solid white;
+
+    width: 100%;
+    max-width: 360px;
+}
+form>textarea{
+    resize: vertical;
+}
+
+form>button{
+    justify-self: center;
+    margin: 16px;
+}
+
+
+
+
+@media screen and (min-width: 540px) {
+    :root{
+        --card-size: 180px;
+    }
+    .bg-mountains{
+        background-image: url("images/MountainsBig1440.png");
+        max-height: 640px;
+        max-width: 200%;
+        background-size: cover;
+    }
+    .bg-mountains-container{
+        position: absolute;
+        top: 40px;
+    }
+
+}
+@media screen and (min-width: 1024px) {
+    .bg-mountains{
+        background-image: url("images/MountainsBig1440.png");
+        max-height: 1024px;
+        max-width: 1392px;
+        background-size: cover;
+    }
+    .bg-mountains-container{
+        position: absolute;
+        top: 40px;
+    }
+
+}
+@media screen and (min-width: 1392px) {
+    .bg-mountains{
+        background-image: url("images/MountainsBig2880.png");
+        max-height: 2880px;
+        max-width: 100%;
+        background-size: contain;
+        background-position: top;
+    }
+    .bg-mountains-container{
+        position: absolute;
+        top: 40px;
+    }
+
+}
