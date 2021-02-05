@@ -3,13 +3,13 @@
     --paragraph: 'Roboto', sans-serif;
     --digital-font: 'VT323', monospace;
     color: white;
+    font-size: 75%;
 }
 
 body {
     background-color: black;
     overflow-x: hidden;
 }
-
 
 span {
     display: block;
@@ -43,6 +43,7 @@ span {
 .banner {
     margin: auto;
     width: 60ch;
+    max-width: 95vw;
     top: 50%;
     left: 50%;
     position: absolute;
@@ -177,7 +178,7 @@ span {
 }
 
 .banner-text h1 {
-    font-size: 3rem;
+    font-size: 2rem;
     letter-spacing: 0.5ch;
 }
 
@@ -185,13 +186,14 @@ span {
     perspective: 40px;
     width: 100%;
 }
+
 main {
     position: absolute;
     left: 50%;
     top: 0;
     transform: translateX(-50%);
     width: 100%;
-    justify-content: center;
+    justify-content: space-evenly;
     display: flex;
     flex-direction: row;
     flex-wrap: wrap;
@@ -201,6 +203,7 @@ main {
     gap: 3rem;
     border-radius: 16rem;
 }
+
 article {
     margin: 4rem 0;
     display: flex;
@@ -210,46 +213,49 @@ article {
     align-content: top;
     align-self: top;
     gap: 1rem;
+    min-width: 128px;
     width: max-content;
-    min-width: 240px;
-    max-width: 400px;
+    max-width: 80vw;
     /* border: solid white 1rem; */
-    background-color: rgb(2,2,2);
+    background-color: rgb(2, 2, 2);
     border-radius: 0.2rem;
-    box-shadow: inset 0 0 8rem 2rem rgb(8, 7, 8) , 0 0 3rem 1rem rgb(10, 0, 10);
+    box-shadow: inset 0 0 8rem 2rem rgb(8, 7, 8), 0 0 3rem 1rem rgb(10, 0, 10);
     /* box-shadow: inset 0 0 2rem 2rem rgb(17, 7, 17) , 0 0 3rem 1rem rgb(8, 3, 8); */
     padding: 4rem;
     transition: transform ease-in-out 500ms;
-
     background-repeat: no-repeat;
     background-position: center;
     background-size: cover;
     position: relative;
 }
-article::before{
+
+article::before {
     content: ' ';
     position: absolute;
     left: 0;
     top: 0;
     width: 100%;
     height: 100%;
-    background-color: rgba(0,0,0,0.5);
+    background-color: rgba(0, 0, 0, 0.5);
     backdrop-filter: blur(0.5rem);
+    background-position: center;
     z-index: 0;
 }
-article>*{
+
+article>* {
     z-index: 1;
 }
-article:hover{
+
+article:hover {
     transform: scale(1.1);
 }
 
-
-
 article img {
-    filter: drop-shadow(0 0 1rem rgb(255,255,255,0.3));
+    filter: drop-shadow(0 0 1rem rgb(255, 255, 255, 0.3));
     /* box-shadow: 0 0 1rem 0 white; */
-    height: 200px;
+    /* height: 200px; */
+    max-height: 200px;
+    min-height: 64px;
     -o-object-fit: contain;
     object-fit: contain;
     order: 1;
@@ -257,19 +263,19 @@ article img {
 
 article p {
     font: var(--paragraph);
-    font-size: 1rem;
+    font-size: 0.8rem;
 }
 
 article .text {
     width: 100%;
-    max-width: 640px;
+    max-width: 50ch;
     padding: 1rem;
     order: 2;
 }
 
 article .title {
     font-family: var(--digital-font);
-    font-size: 2rem;
+    font-size: 1.5rem;
     position: relative;
     display: inline-block;
     text-shadow: 0 0 4px #FFFFFF;
@@ -313,10 +319,25 @@ footer::before {
     box-shadow: 0 0 4px 0 #ffffff;
 }
 
-@media only screen and (min-width: 150ch) {
-    
-    main{
-        
-    padding: 4rem;
+footer h1{
+    font-size: 1rem;
+}
+
+@media only screen and (min-width: 100ch) {
+     :root {
+        font-size: 100%;
+    }
+    main {
+        padding: 4rem;
+    }
+    article .title {
+        font-size: 2rem;
+    }
+    article p{
+
+        font-size: 1rem;
+    }
+    footer h1{
+        font-size: 2rem;
     }
 }
