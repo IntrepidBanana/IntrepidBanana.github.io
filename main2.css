@@ -1,14 +1,13 @@
 :root {
     font-family: 'Roboto Mono', monospace;
     --paragraph: 'Roboto', sans-serif;
-    --digital-font: 'VT323', monospace;
+    --digital-font: 'Montserrat', sans-serif;
     color: white;
     /* font-size: 100%; */
 }
 
 body {
-    background-color: rgb(12, 9, 12);
-    background-color: #333;
+    background-color: white;
     width: 100vw;
     max-width: 1280px;
     margin: auto;
@@ -22,50 +21,39 @@ span {
 .wrapper {
     width: 100%;
     display: grid;
-    grid-template-columns: 1fr;
+    grid-template-columns: min-content 1fr;
     grid-template-rows: auto;
+    gap: 3rem;
+    position: relative;
 }
 
 .banner-container {
-    width: 640px;
-    max-width: 80vw;
-    height: 100vh;
+    position: sticky;
+    top: 50%;
+    transform: translateY(-50%);
     left: 0;
-    top: 0;
-    margin: auto;
+    width: fit-content;
+    height: fit-content;
+    margin: 0 auto;
+    padding: 3rem;
 }
 
 .banner {
     margin: auto;
-    max-width: 95vw;
-    top: 50%;
-    left: 50%;
-    position: absolute;
-    transform: translate(-50%, -50%);
     box-shadow: none;
     overflow: hidden;
-    max-height: 100vh;
-    min-height: 240px;
     display: flex;
-    flex-flow: row nowrap;
+    flex-flow:column nowrap;
     gap: 1rem;
-}
-
-.banner-text {
-    margin: 1rem auto;
-    display: flex;
-    flex-direction: column;
-    align-items: flex-start;
-    text-transform: uppercase;
-    align-self: center;
-    text-align: left;
-}
-
-.banner-text span,
-.banner-text h1 {
+    align-items: center;
     font-family: var(--digital-font);
-    font-variant: small-caps;
-    text-shadow: 0 0 4px #FFFFFF;
+    text-transform: uppercase;
+    margin: 3rem auto;
+}
+
+
+.banner h1 {
+    font-family: var(--digital-font);
     font-size: 1.2rem;
 }
 
@@ -80,11 +68,11 @@ span {
 .banner img {
     overflow: hidden;
     border-radius: 50%;
-    -webkit-filter: invert();
+    /* -webkit-filter: invert(); */
     filter: invert();
     margin: auto;
     min-width: 128px;
-    max-width: 480px;
+    max-width: 220px;
     width: auto;
     transform: translateX(-2%);
 }
@@ -95,23 +83,19 @@ main {
     align-items: center;
     justify-items: center;
     grid-auto-rows: auto;
-    gap: 3rem;
-
-}
-
-main>* {
-    flex-grow: 1;
-    grid-row: span 2;
-    grid-column: span 2;
+    gap: 2rem;
+    margin: 3rem 5rem;
 }
 
 article {
     transition: all ease-in-out 300ms;
     position: relative;
-    height: 100%;
-    width: 80%;
-    background-color: white;
-    border-radius: 0.5rem;
+    height: auto;
+    width: 100%;
+
+    display: flex;
+    flex-flow: row nowrap;
+    gap: 1rem;
 }
 
 article * {
@@ -122,9 +106,9 @@ article img {
     display: block;
     object-fit: cover;
     width: 100%;
+    max-width: 280px;
     height: auto;
     max-height: 300px;
-    border-radius: 0.5rem 0.5rem 0 0;
 }
 
 article p {
@@ -133,34 +117,23 @@ article p {
 }
 
 article .text {
-    color: #333;
+    color: white;
     width: 80%;
-    /* min-width: 40ch; */
-    padding: 3rem;
-    padding-top: 1.5rem;
     margin: auto;
+    font-size: 0.8rem;
 }
 
 article .title {
     font-family: var(--digital-font);
-    font-size: 1.5rem;
+    font-size: 1rem;
     position: relative;
     display: inline-block;
-    color: #333;
-}
-
-article h2::after {
-    content: ' ';
-    position: absolute;
-    left: 0;
-    bottom: 0;
-    width: 100%;
-    height: 2px;
-    background-color: #333;
+    color: white;
+    text-decoration: none;
 }
 
 article a {
-    color: #333;
+    color: white;
     font-size: 1rem;
     margin-right: 1rem;
 }
@@ -189,151 +162,4 @@ footer::before {
 
 footer h1 {
     font-size: 1rem;
-}
-
-
-/* @media only screen and (min-width: 1480px) {
-    .wrapper {
-        grid-template-columns: min-content auto;
-        grid-template-rows: auto;
-    }
-    .banner-container {
-        position: -webkit-sticky;
-        position: sticky;
-    
-    }
-    main {
-        display: grid;
-        justify-content: center;
-        align-items: center;
-        justify-items: center;
-        grid-auto-flow: dense;
-        grid-template-columns: repeat(auto-fit, 75px);
-        grid-auto-rows: 60px;
-        gap: 2rem;
-    }
-    .square {
-        grid-row: span 4;
-        grid-column: span 4;
-    }
-    .rect {
-        grid-column: span 4;
-        grid-row: span 3;
-    }
-    article {
-        transition: all ease-in-out 300ms;
-        position: relative;
-        height: 100%;
-        width: 100%;
-    }
-    article p {
-        font: var(--paragraph);
-        font-size: small;
-    }
-    
-    article .text {
-        display: none;
-        visibility: hidden;
-        z-index: -1;
-        position: absolute;
-        top: 50%;
-        left: 50%;
-        transform: translate(-50%, -50%);
-        width: 80%;
-        filter: drop-shadow(0 0 1rem black);
-    }
-    article:hover .text {
-        z-index: 2;
-        visibility: visible;
-        display: block;
-    }
-    article img {
-        display: block;
-        object-fit: cover;
-        width: 100%;
-        height: 100%;
-    }
-} */
-
-@media only screen and (min-width: 860px) {
-    main {
-        display: grid;
-        justify-content: center;
-        align-items: center;
-        justify-items: center;
-        grid-auto-flow: dense;
-        grid-template-columns: repeat(auto-fit, 75px);
-        grid-auto-rows: 60px;
-        padding: 0rem;
-        gap: 2rem;
-    }
-    .square {
-        grid-row: span 4;
-        grid-column: span 4;
-    }
-    .rect {
-        grid-column: span 4;
-        grid-row: span 3;
-    }
-    article {
-        transition: all ease-in-out 300ms;
-        position: relative;
-        height: 100%;
-        border-radius: 0;
-        width: 100%;
-        background-color: unset;
-    }
-    article p {
-        font: var(--paragraph);
-        font-size: small;
-    }
-    article .text {
-        color: white;
-        display: none;
-        visibility: hidden;
-        z-index: -1;
-        position: absolute;
-        top: 50%;
-        left: 50%;
-        transform: translate(-50%, -50%);
-        padding: 1rem;
-        filter: drop-shadow(0 0 1rem black);
-        width: 60%;
-        min-width: 30ch;
-    }
-    article:hover .text {
-        z-index: 2;
-        visibility: visible;
-        display: block;
-    }
-    article img {
-        display: block;
-        object-fit: cover;
-        width: 100%;
-        height: 100%;
-        max-height: unset;
-        border-radius: 0;
-    }
-    article:hover img {
-        filter: brightness(0.3);
-    }
-    article .text {
-        color: #333;
-        width: 80%;
-        padding: 3rem;
-        padding-top: 1.5rem;
-        margin: auto;
-    }
-    article .title {
-        color: white;
-    }
-    article h2::after {
-        background-color: white;
-    }
-    article a {
-        color: white;
-    } 
-    article p {
-        color: white;
-    }
 }
